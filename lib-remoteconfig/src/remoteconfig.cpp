@@ -2,7 +2,7 @@
  * @file remoteconfig.cpp
  *
  */
-/* Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@
 
 #include "remoteconfigjson.h"
 
-#include "spiflashstore.h"
+#include "configstore.h"
 
 /* rconfig.txt */
 #include "remoteconfigparams.h"
@@ -188,7 +188,7 @@
 
 #if !defined(DISABLE_TFTP)
 # include "tftp/tftpfileserver.h"
-# include "spiflashinstall.h"
+# include "flashcodeinstall.h"
 #endif
 
 #include "debug.h"
@@ -1532,7 +1532,7 @@ void RemoteConfig::HandleTftpSet() {
 		bool bSucces = true;
 
 		if (m_pTFTPFileServer->isDone()) {
-			bSucces = SpiFlashInstall::Get()->WriteFirmware(m_pTFTPBuffer, nFileSize);
+			bSucces = FlashCodeInstall::Get()->WriteFirmware(m_pTFTPBuffer, nFileSize);
 
 			if (!bSucces) {
 				Display::Get()->TextStatus("Error: TFTP", Display7SegmentMessage::ERROR_TFTP);
