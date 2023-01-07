@@ -1,8 +1,8 @@
 /**
- * enet_config.h
+ * @file get_timer.cpp
  *
  */
-/* Copyright (C) 2022 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2018-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,29 +23,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef ENET_CONFIG_H_
-#define ENET_CONFIG_H_
+#include <cstdint>
+#include <cstddef>
+#include <time.h>
 
-#if !defined (GD32_H_)
-# error gd32.h should be included first
-#endif
+uint32_t get_timer(uint32_t base) {
+	if (0 == base) {
+		return static_cast<uint32_t>(time(nullptr));
+	}
 
-#if(PHY_TYPE == LAN8700)
-
-#elif(PHY_TYPE == DP83848)
-# define PHY_REG_MICR				0x11U
-# define PHY_REG_MISR				0x12U
-# define PHY_INT_AND_OUTPUT_ENABLE	0x03U
-# define PHY_LINK_INT_ENABLE		0x20U
-#elif(PHY_TYPE == RTL8201F)
-# define PHY_REG_IER				0x13
-# define PHY_REG_IER_INT_ENABLE		BIT(13)
-# define PHY_REG_IER_CUSTOM_LED		BIT(3)
-# define PHY_REG_ISR				0x1e
-# define PHY_REG_ISR_LINK			BIT(11)
-# define PHY_REG_PAGE_SELECT		0x1f
-#else
-#error PHY_TYPE is not set
-#endif
-
-#endif /* ENET_CONFIG_H_ */
+	return static_cast<uint32_t>(time(nullptr)) - base;
+}

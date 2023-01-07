@@ -37,7 +37,7 @@ File: `gd32f207rg_flash.ld`
 File: `spiflashinstall.h`
 
 	# elif defined (BOARD_GD32F207R)
-	#  define OFFSET_UIMAGE		0x007000		// 28K
+	#  define OFFSET_UIMAGE		0x008000		// 32K
 	#  define FIRMWARE_MAX_SIZE (234 * 1024)	// 234K
 
 
@@ -47,7 +47,7 @@ The change to be made in your build configuration is in the file `gd32f207rg_fla
 	
 	MEMORY
 	{
-	  FLASH (rx)      : ORIGIN = 0x08007000, LENGTH = 234K
+	  FLASH (rx)      : ORIGIN = 0x08008000, LENGTH = 234K
 	  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 256K
 	}
 	
