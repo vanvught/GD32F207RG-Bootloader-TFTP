@@ -2,7 +2,7 @@
  * @file spi_internal.h
  *
  */
-/* Copyright (C) 2019-2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2022 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -79,11 +79,11 @@ extern uint32_t get_timer(uint32_t base); //TODO Remove
 extern int spi_init(void);
 extern int spi_xfer(uint32_t bitlen, const uint8_t *dout, uint8_t *din, uint32_t flags);
 
-#define CONFIG_SPI_FLASH_WINBOND
-extern int spi_flash_probe_winbond(struct spi_flash *spi, uint8_t *idcode);
-
 #define CONFIG_SPI_FLASH_MACRONIX
 int spi_flash_probe_macronix(struct spi_flash *flash, uint8_t *idcode);
+
+#define CONFIG_SPI_FLASH_WINBOND
+extern int spi_flash_probe_winbond(struct spi_flash *spi, uint8_t *idcode);
 
 #define CONFIG_SPI_FLASH_GIGADEVICE
 extern int spi_flash_probe_gigadevice(struct spi_flash *spi, uint8_t *idcode);

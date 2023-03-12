@@ -50,3 +50,5 @@
 *.su
 
 *.bin
+*.list
+*.map
