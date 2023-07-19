@@ -315,24 +315,7 @@ void RemoteConfig::SetDisplayName(const char *pDisplayName) {
 	DEBUG_EXIT
 }
 
-void RemoteConfig::Run() {
-	if (__builtin_expect((m_bDisable), 1)) {
-		return;
-	}
-
-#if defined (ENABLE_TFTP_SERVER)
-	if (__builtin_expect((m_pTFTPFileServer != nullptr), 0)) {
-		m_pTFTPFileServer->Run();
-	}
-#endif
-
-	uint16_t nForeignPort;
-	m_nBytesReceived = Network::Get()->RecvFrom(m_nHandle, const_cast<const void **>(reinterpret_cast<void **>(&s_pUdpBuffer)), &m_nIPAddressFrom, &nForeignPort);
-
-	if (__builtin_expect((m_nBytesReceived < 4), 1)) {
-		return;
-	}
-
+void RemoteConfig::HandleRequest() {
 #ifndef NDEBUG
 	debug_dump(s_pUdpBuffer, m_nBytesReceived);
 #endif
@@ -467,7 +450,7 @@ void RemoteConfig::HandleList() {
 	} else if (m_nBytesReceived == nCmdLength + 1) {
 		DEBUG_PRINTF("%c", nCmdLength + 1);
 		if (s_pUdpBuffer[nCmdLength + 1] == '*') {
-			Network::Get()->SendTo(m_nHandle, pListResponse, static_cast<uint16_t>(nListLength), network::IP4_BROADCAST, remoteconfig::udp::PORT);
+			Network::Get()->SendTo(m_nHandle, pListResponse, static_cast<uint16_t>(nListLength), Network::Get()->GetBroadcastIp(), remoteconfig::udp::PORT);
 			DEBUG_EXIT
 			return;
 		}
@@ -534,7 +517,7 @@ uint32_t RemoteConfig::HandleGet(void *pBuffer, uint32_t nBufferLength) {
 		if (pBuffer == nullptr) {
 			Network::Get()->SendTo(m_nHandle, "ERROR#?get\n", 11, m_nIPAddressFrom, remoteconfig::udp::PORT);
 		} else {
-			memcpy(pBuffer, "ERROR#?get\n", std::min(11U, nBufferLength));
+			memcpy(pBuffer, "ERROR#?get\n", std::min(static_cast<uint32_t>(11), nBufferLength));
 		}
 		DEBUG_EXIT
 		return 12;

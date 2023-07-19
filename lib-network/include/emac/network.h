@@ -45,37 +45,34 @@
 
 class Network {
 public:
-	Network();
+	Network(NetworkParamsStore *pNetworkParamsStore);
 	~Network() {}
-
-	void Init(NetworkParamsStore *pNetworkParamsStore = nullptr);
 
 	void Print();
 
 	void Shutdown() {
 		network::display_emac_shutdown();
+		network::mdns_shutdown();
 		net_shutdown();
 	}
 
 	void MacAddressCopyTo(uint8_t *pMacAddress) {
-		for (uint32_t i =  0; i < network::MAC_SIZE; i++) {
-			pMacAddress[i] = m_aNetMacaddr[i];
-		}
+		memcpy(pMacAddress, m_aNetMacaddr, network::MAC_SIZE);
 	}
 
 	void SetIp(uint32_t nIp);
 	uint32_t GetIp() const {
-		return m_nLocalIp;
+		return m_ipInfo.ip.addr;
 	}
 
 	void SetNetmask(uint32_t nNetmask);
 	uint32_t GetNetmask() const {
-		return m_nNetmask;
+		return m_ipInfo.netmask.addr;
 	}
 
 	void SetGatewayIp(uint32_t nGatewayIp);
 	uint32_t GetGatewayIp() const {
-		return m_nGatewayIp;
+		return m_ipInfo.gw.addr;
 	}
 
 	/*
@@ -198,11 +195,11 @@ public:
 	bool ApplyQueuedConfig();
 
 	uint32_t GetNetmaskCIDR() const {
-		return static_cast<uint32_t>(__builtin_popcount(m_nNetmask));
+		return static_cast<uint32_t>(__builtin_popcount(m_ipInfo.netmask.addr));
 	}
 
 	uint32_t GetBroadcastIp() const {
-		return m_nLocalIp | ~m_nNetmask;
+		return m_ipInfo.ip.addr | ~m_ipInfo.netmask.addr;
 	}
 
 	char GetAddressingMode() {
@@ -235,12 +232,8 @@ public:
 		return m_fNtpUtcOffset;
 	}
 
-	void SetNetworkStore(NetworkStore *pNetworkStore) {
-		m_pNetworkStore = pNetworkStore;
-	}
-
 	bool IsValidIp(uint32_t nIp) {
-		return (m_nLocalIp & m_nNetmask) == (nIp & m_nNetmask);
+		return (m_ipInfo.ip.addr & m_ipInfo.netmask.addr) == (nIp & m_ipInfo.netmask.addr);
 	}
 
 	void Run() {
@@ -248,7 +241,7 @@ public:
 #if defined (ENET_LINK_CHECK_USE_PIN_POLL)
 		net::link_pin_poll();
 #elif defined (ENET_LINK_CHECK_REG_POLL)
-		const net::Link link_state = net::link_register_read();
+		const net::Link link_state = net::link_status_read();
 
 		if (link_state != s_lastState) {
 			s_lastState = link_state;
@@ -271,9 +264,7 @@ private:
 	uint32_t m_nNtpServerIp { 0 };
 	float m_fNtpUtcOffset { 0 };
 
-	uint32_t m_nLocalIp { 0 };
-	uint32_t m_nGatewayIp { 0 };
-	uint32_t m_nNetmask { 0 };
+	struct IpInfo m_ipInfo;
 
 	char m_aHostName[network::HOSTNAME_SIZE];
 	char m_aDomainName[network::DOMAINNAME_SIZE];
@@ -283,12 +274,12 @@ private:
 	NetworkStore *m_pNetworkStore { nullptr };
 
 	void SetDefaultIp() {
-		m_nLocalIp = 2
+		m_ipInfo.ip.addr = 2
 				+ ((static_cast<uint32_t>(m_aNetMacaddr[3])) << 8)
 				+ ((static_cast<uint32_t>(m_aNetMacaddr[4])) << 16)
 				+ ((static_cast<uint32_t>(m_aNetMacaddr[5])) << 24);
-		m_nNetmask = 255;
-		m_nGatewayIp = m_nLocalIp;
+		m_ipInfo.netmask.addr = 255;
+		m_ipInfo.gw.addr = m_ipInfo.ip.addr;
 	}
 
 	struct QueuedConfig {
@@ -304,7 +295,7 @@ private:
 
 	QueuedConfig m_QueuedConfig;
 
-    bool isQueuedMaskSet(uint32_t nMask) {
+    bool isQueuedMaskSet(const uint32_t nMask) {
     	return (m_QueuedConfig.nMask & nMask) == nMask;
     }
 
