@@ -1,8 +1,8 @@
 /**
- * @file bitbanging595.cpp
+ * @file console.c
  *
  */
-/* Copyright (C) 2021-2022 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2023 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,22 @@
  * THE SOFTWARE.
  */
 
-#include "gd32_bitbanging595.h"
+#include <stdint.h>
 
-BitBanging595 *BitBanging595::s_pThis;
+void console_init(void) {
+}
+
+void console_putc(__attribute__((unused)) int i) {
+}
+
+void console_puts(__attribute__((unused)) const char *p) {
+}
+
+void console_write(__attribute__((unused)) const char *p, __attribute__((unused)) unsigned int i) {
+}
+
+void console_status(__attribute__((unused))  uint32_t i, __attribute__((unused)) const char *p) {
+}
+
+void console_error(__attribute__((unused)) const char *p) {
+}

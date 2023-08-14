@@ -50,6 +50,9 @@ ifneq ($(MAKE_FLAGS),)
 		EXTRA_SRCDIR+=src/rdm
 		RDM=1
 		EXTRA_INCLUDES+=../lib-rdm/include ../lib-rdmsensor/include ../lib-rdmsubdevice/include
+		ifeq ($(findstring ARTNET_VERSION=4,$(MAKE_FLAGS)), ARTNET_VERSION=4)
+			EXTRA_INCLUDES+=../lib-e131/include
+		endif	
 	endif
 	
 	ifeq ($(findstring NODE_E131,$(MAKE_FLAGS)), NODE_E131)
@@ -144,6 +147,7 @@ else
 	EXTRA_SRCDIR+=src/stepper
 	EXTRA_INCLUDES+=../lib-l6470dmx/include ../lib-l6470/include
 	
+	DEFINES+=ARTNET_VERSION=4
 	DEFINES+=LIGHTSET_PORTS=4
 	DEFINES+=CONFIG_PIXELDMX_MAX_PORTS=8
 	DEFINES+=CONFIG_DDPDISPLAY_MAX_PORTS=8
