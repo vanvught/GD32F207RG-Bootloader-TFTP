@@ -1,12 +1,12 @@
 build_gd32/main.elf  :
 section       size         addr
 .vectors     0x1a8    0x8000000
-.text       0x6630    0x80001a8
-.rodata      0xe04    0x80067d8
+.text       0x659c    0x80001a8
+.rodata      0xe04    0x8006744
 .stack       0x400   0x20000000
 .heap        0x400   0x20000400
 .data         0x7c   0x20000800
 .bss       0x3e82c   0x20000880
-Total      0x46684
+Total      0x465f0
 
 
