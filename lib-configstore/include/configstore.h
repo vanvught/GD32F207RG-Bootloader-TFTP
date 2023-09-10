@@ -35,7 +35,6 @@ enum class Store {
 	NETWORK,
 	DMXSEND,
 	WS28XXDMX,
-	E131,
 	LTC,
 	MIDI,
 	LTCETC,
