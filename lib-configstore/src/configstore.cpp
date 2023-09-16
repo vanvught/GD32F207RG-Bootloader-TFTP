@@ -102,6 +102,8 @@ bool ConfigStore::Init() {
 	StoreDevice::Read(s_nStartAddress, FlashStore::SIZE, reinterpret_cast<uint8_t *>(&s_SpiFlashData), result);
 	assert(result == storedevice::result::OK);
 
+	debug_dump(s_SpiFlashData, FlashStore::SIZE);
+
 	bool bSignatureOK = true;
 
 	for (uint32_t i = 0; i < sizeof(s_aSignature); i++) {
@@ -183,6 +185,11 @@ void ConfigStore::Update(Store store, uint32_t nOffset, const void *pData, uint3
 
 	DEBUG_PRINTF("pSrc=%p [pData], pDst=%p", reinterpret_cast<const void *>(pSrc), reinterpret_cast<void *>(pDst));
 
+#if defined(__linux__) || defined (__APPLE__)
+//	debug_dump(pSrc, nDataLength);
+//	debug_dump(pDst, nDataLength);
+#endif
+
 	for (uint32_t i = 0; i < nDataLength; i++) {
 		if (*pSrc != *pDst) {
 			bIsChanged = true;
@@ -205,7 +212,7 @@ void ConfigStore::Update(Store store, uint32_t nOffset, const void *pData, uint3
 	DEBUG_EXIT
 }
 
-void ConfigStore::Copy(Store store, void *pData, uint32_t nDataLength, uint32_t nOffset, bool isSetList) {
+void ConfigStore::Copy(Store store, void *pData, uint32_t nDataLength, uint32_t nOffset) {
 	DEBUG_ENTRY
 
 	if (!s_bHaveFlashChip) {
@@ -213,23 +220,11 @@ void ConfigStore::Copy(Store store, void *pData, uint32_t nDataLength, uint32_t 
 		return;
 	}
 
-	DEBUG_PRINTF("[%s]:%u pData=%p, nDataLength=%u, nOffset=%u, isSetList=%d", s_aStoreName[static_cast<uint32_t>(store)], static_cast<uint32_t>(store), pData, nDataLength, nOffset, isSetList);
+	DEBUG_PRINTF("[%s]:%u pData=%p, nDataLength=%u, nOffset=%u", s_aStoreName[static_cast<uint32_t>(store)], static_cast<uint32_t>(store), pData, nDataLength, nOffset);
 
 	assert(store < Store::LAST);
 	assert(pData != nullptr);
 	assert((nDataLength + nOffset) <= s_aStorSize[static_cast<uint32_t>(store)]);
-
-	if (isSetList) {
-		const auto *pSet = reinterpret_cast<uint32_t *>((&s_SpiFlashData[GetStoreOffset(store)] + nOffset));
-
-		DEBUG_PRINTF("*pSet=0x%x", reinterpret_cast<uint32_t>(*pSet));
-
-		if (*pSet == 0) {
-			Update(store, nOffset, pData, nDataLength);
-			DEBUG_EXIT
-			return;
-		}
-	}
 
 	const auto *pSrc = const_cast<const uint8_t *>(&s_SpiFlashData[GetStoreOffset(store)]) + nOffset;
 	memcpy(pData, pSrc, nDataLength);

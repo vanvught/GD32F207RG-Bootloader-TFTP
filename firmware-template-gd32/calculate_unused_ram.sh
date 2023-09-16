@@ -17,5 +17,5 @@ total_ram=$(grep "RAM (xrw)" "$linker_script" | awk '{print $NF}' | sed 's/K$//'
 unused_ram=$(( $(echo $total_ram) - $(echo $used_stack) - $(echo $used_heap) - $(echo $used_data) - $(echo $used_bss) ))
 
 cat $1
-echo "Available RAM: $total_ram bytes"
-echo "Unused RAM: $unused_ram bytes"
+echo "RAM $total_ram bytes, Unused: $unused_ram bytes"
+echo 
