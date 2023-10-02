@@ -66,7 +66,8 @@ int main(void) {
 	const auto isNotRemote = (bkp_data_read(BKP_DATA_1) != 0xA5A5);
 	const auto isNotKey =  (gpio_input_bit_get(KEY_BOOTLOADER_TFTP_GPIOx, KEY_BOOTLOADER_TFTP_GPIO_PINx));
 
-	if (isNotRemote && isNotKey) {    	// https://developer.arm.com/documentation/ka001423/1-0
+	if (isNotRemote && isNotKey) {
+		// https://developer.arm.com/documentation/ka001423/1-0
 		//1. Disable interrupt response.
 		__disable_irq();
 		//2. Disable all enabled interrupts in NVIC.
