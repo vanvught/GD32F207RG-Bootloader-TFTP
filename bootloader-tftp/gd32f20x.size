@@ -6,7 +6,7 @@ section       size         addr
 .stack       0x800   0x20000000
 .heap        0x400   0x20000800
 .data         0x7c   0x20000c00
-.bss       0x3e82c   0x20000c80
-Total      0x46aa8
+.bss       0x3e834   0x20000c80
+Total      0x46ab0
 
 
