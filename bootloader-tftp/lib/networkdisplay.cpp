@@ -35,12 +35,12 @@ static constexpr auto LINE_IP = 2U;
 
 void display_emac_config() {
 	Display::Get()->ClearEndOfLine();
-	Display::Get()->PutString("Ethernet config");
+	Display::Get()->Printf(LINE_IP, "Ethernet config");
 }
 
 void display_emac_start() {
 	Display::Get()->ClearEndOfLine();
-	Display::Get()->PutString("Ethernet start");
+	Display::Get()->Printf(LINE_IP, "Ethernet start");
 }
 
 void display_emac_status(const bool isLinkUp) {
