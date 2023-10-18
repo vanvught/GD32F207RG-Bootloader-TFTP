@@ -40,18 +40,24 @@
 #  define OFFSET_UIMAGE		0x007000		// 28K
 #  define FIRMWARE_MAX_SIZE (74 * 1024)		// 74K
 # elif defined (BOARD_GD32F207RG)
-#  define OFFSET_UIMAGE		0x008000		// 32K
+#  define OFFSET_UIMAGE		0x007000		// 28K
 #  define FIRMWARE_MAX_SIZE (234 * 1024)	// 234K
-# elif defined (BOARD_GD32F207VC)
+# elif defined (BOARD_GD32F207VC_2)
+#  define OFFSET_UIMAGE		0x008000		// 32K
+#  define FIRMWARE_MAX_SIZE (106 * 1024)	// 106K
+# elif defined (BOARD_GD32F207VC_4)
 #  define OFFSET_UIMAGE		0x008000		// 32K
 #  define FIRMWARE_MAX_SIZE (106 * 1024)	// 106K
 # elif defined (BOARD_GD32F207C_EVAL)
-#  define OFFSET_UIMAGE		0x007000		// 28K
+#  define OFFSET_UIMAGE		0x008000		// 32K
 #  define FIRMWARE_MAX_SIZE (106 * 1024)	// 106K
 # elif defined (BOARD_GD32F407RE)
 #  define OFFSET_UIMAGE		0x008000		// 32K
 #  define FIRMWARE_MAX_SIZE (106 * 1024)	// 106K
 # elif defined (BOARD_BW_OPIDMX4)
+#  define OFFSET_UIMAGE		0x008000		// 32K
+#  define FIRMWARE_MAX_SIZE (106 * 1024)	// 106K
+# elif defined (BOARD_DMX3)
 #  define OFFSET_UIMAGE		0x008000		// 32K
 #  define FIRMWARE_MAX_SIZE (106 * 1024)	// 106K
 # elif defined (BOARD_DMX4)

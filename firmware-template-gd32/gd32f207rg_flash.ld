@@ -9,7 +9,7 @@ ENTRY(Reset_Handler)
 SECTIONS
 {
   __heap_size = DEFINED(__heap_size) ? __heap_size : 1K;
-  __stack_size = DEFINED(__stack_size) ? __stack_size : 1K;
+  __stack_size = DEFINED(__stack_size) ? __stack_size : 2K;
 
   .vectors :
   {
@@ -30,10 +30,8 @@ SECTIONS
 	*(.glue_7)
 	*(.glue_7t)
 	*(.eh_frame)
-
     KEEP (*(.init))
     KEEP (*(.fini))
-
     . = ALIGN(4);
     _etext = .;
   } >FLASH
@@ -45,19 +43,6 @@ SECTIONS
     *(.rodata*)
     . = ALIGN(4);
   } >FLASH
-
-   .ARM.extab :
-  { 
-     *(.ARM.extab* .gnu.linkonce.armextab.*) 
-  } >FLASH
-  
-    .ARM : {
-    __exidx_start = .;
-    *(.ARM.exidx*)
-    __exidx_end = .;
-    } >FLASH
-
-  .ARM.attributes : { *(.ARM.attributes) } > FLASH
 
   .preinit_array :
   {
@@ -81,6 +66,24 @@ SECTIONS
     KEEP (*(SORT(.fini_array.*)))
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >FLASH
+
+  .stack :
+  {
+    . = ALIGN(4);
+    PROVIDE( stack_low = . ); 
+    . = __stack_size;  
+    PROVIDE( _sp = . ); 
+    . = ALIGN(4);
+  } >RAM AT>RAM
+  
+  .heap :
+  {
+    . = ALIGN(4);
+    heap_low = .;
+    . = . + __heap_size;
+    heap_top = .;
+    . = ALIGN(4);
+  } >RAM AT>RAM
 
   _sidata = LOADADDR(.data);
   .data :
@@ -106,31 +109,13 @@ SECTIONS
     __bss_end__ = _ebss;
   } >RAM
 
- . = ALIGN(8);
+  . = ALIGN(8);
   PROVIDE ( end = _ebss );
   PROVIDE ( _end = _ebss );
-  
-  .heap ORIGIN(RAM) + LENGTH(RAM) - __stack_size - __heap_size :
-  {
-    . = ALIGN(4);
-    heap_low = .;
-    . = . + __heap_size;
-    heap_top = .;
-    . = ALIGN(4);
-  } >RAM AT>RAM
-
-  .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size :
-  {
-	. = ALIGN(4);
-    PROVIDE( _heap_end = . ); 
-    . = __stack_size;  
-    PROVIDE( _sp = . ); 
-    . = ALIGN(4);
-  } >RAM AT>RAM
 
   /DISCARD/ :
   {
-	*(*.ARM.attributes)
+	*(*.ARM.*)
 	*(*.comment)
 	*(*.debug*)
   }
