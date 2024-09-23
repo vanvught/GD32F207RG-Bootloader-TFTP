@@ -23,8 +23,8 @@ SECTIONS
   .text :
   {
     . = ALIGN(4);
-	*(.text.unlikely*)
-	*(.text.hot*)
+    *(.text.unlikely*)
+    *(.text.hot*)
 	*(.text)
 	*(.text*)
 	*(.glue_7)
@@ -43,14 +43,14 @@ SECTIONS
     *(.rodata*)
     . = ALIGN(4);
   } >FLASH
-
+  
   .preinit_array :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
   } >FLASH
-
+  
   .init_array :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
@@ -58,7 +58,7 @@ SECTIONS
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
   } >FLASH
-
+  
   .fini_array :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
@@ -74,16 +74,17 @@ SECTIONS
     . = __stack_size;  
     PROVIDE( _sp = . ); 
     . = ALIGN(4);
-  } >RAM AT>RAM
+  } >RAM
   
-  .heap :
+  .ram :
   {
+  	. = ALIGN(4);
+    _snetwork = .;
+    *(.network*)
     . = ALIGN(4);
-    heap_low = .;
-    . = . + __heap_size;
-    heap_top = .;
-    . = ALIGN(4);
-  } >RAM AT>RAM
+    _enetwork = .;
+  	. = ALIGN(4);
+  } >RAM
 
   _sidata = LOADADDR(.data);
   .data :
@@ -95,7 +96,7 @@ SECTIONS
     . = ALIGN(4);
     _edata = .;
   } >RAM AT> FLASH
-
+  
   . = ALIGN(4);
   .bss :
   {
@@ -112,6 +113,15 @@ SECTIONS
   . = ALIGN(8);
   PROVIDE ( end = _ebss );
   PROVIDE ( _end = _ebss );
+  
+  .heap :
+  {
+    . = ALIGN(4);
+    heap_low = .;
+    . = . + __heap_size;
+    heap_top = .;
+    . = ALIGN(4);
+  } >RAM
 
   /DISCARD/ :
   {
@@ -121,5 +131,4 @@ SECTIONS
   }
 }
 
- /* input sections */
-GROUP(libgcc.a libc.a)
+GROUP(libgcc.a)
