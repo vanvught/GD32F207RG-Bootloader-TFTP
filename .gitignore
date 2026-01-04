@@ -70,3 +70,9 @@ lib-gd32/gd32f4*/*
 gd32h7*.*
 lib-gd32/gd32h7*/*
 
+/.cache
+/lib-remoteconfig/include/http
+/lib-remoteconfig/src/http
+/lib-remoteconfig/http/content
+/lib-remoteconfig/include/httpd
+compile_commands.json
