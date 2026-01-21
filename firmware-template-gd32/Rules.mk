@@ -19,7 +19,7 @@ BUILD=build_gd32/
 
 FIRMWARE_DIR=./../firmware-template-gd32/
 
-DEFINES:=$(addprefix -D,$(DEFINES))
+DEFINES:=$(addprefix -D,$(DEFINES)) -DCONFIG_NETWORK_MEMORY_BLOCKS=1
 
 MCU=GD32F207RG
 
