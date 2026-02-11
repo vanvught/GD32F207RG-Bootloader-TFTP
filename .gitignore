@@ -76,3 +76,4 @@ lib-gd32/gd32h7*/*
 /lib-remoteconfig/http/content
 /lib-remoteconfig/include/httpd
 compile_commands.json
+/common/scripts/gd32/venv
