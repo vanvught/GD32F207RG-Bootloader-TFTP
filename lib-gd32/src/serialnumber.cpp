@@ -1,9 +1,8 @@
-#pragma once
 /**
- * @file hal_millis.h
+ * @file serialnumber.cpp
  *
  */
-/* Copyright (C) 2025 by Arjan van Vught mailto:info@gd32-dmx.org
+/* Copyright (C) 2025-2026 by Arjan van Vught mailto:info@gd32-dmx.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +25,19 @@
 
 #include <cstdint>
 
-#include "h3.h"
+#include "serialnumber.h"
 
-namespace hal
-{
-inline uint32_t Millis()
-{
-    return H3_TIMER->AVS_CNT0;
+void SerialNumber(uint8_t sn[kSnSize]) {
+#if defined(GD32H7XX)
+    const auto kMacaddressHigh = *reinterpret_cast<volatile uint32_t*>(0x1FF0F7E8);
+#elif defined(GD32F4XX)
+    const auto kMacaddressHigh = *reinterpret_cast<volatile uint32_t*>(0x1FFF7A10);
+#else
+    const auto kMacaddressHigh = *reinterpret_cast<volatile uint32_t*>(0x1FFFF7E8);
+#endif
+
+    sn[0] = static_cast<uint8_t>((kMacaddressHigh >> 0) & 0xFF);
+    sn[1] = static_cast<uint8_t>((kMacaddressHigh >> 8) & 0xFF);
+    sn[2] = static_cast<uint8_t>((kMacaddressHigh >> 16) & 0xFF);
+    sn[3] = static_cast<uint8_t>((kMacaddressHigh >> 24) & 0xFF);
 }
-} // namespace hal
