@@ -10,6 +10,7 @@ AR	 = $(PREFIX)ar
 
 BOARD?=BOARD_GD32F207RG
 ENET_PHY?=RTL8201F
+MCU=GD32F207RG
 
 TARGET=gd32f207.bin
 LIST=$(FAMILY).list
@@ -21,15 +22,12 @@ FIRMWARE_DIR=./../firmware-template-gd32/
 
 DEFINES:=$(addprefix -D,$(DEFINES)) -DCONFIG_NETWORK_MEMORY_BLOCKS=1
 
-MCU=GD32F207RG
+include ../common/make/gd32/Board.mk
+include ../common/make/gd32/Mcu.mk
+include ../common/make/gd32/Includes.mk
+include ../common/make/gd32/Validate.mk
 
-include ../firmware-template-gd32/Board.mk
-include ../firmware-template-gd32/Mcu.mk
-include ../firmware-template/libs.mk
-include ../firmware-template-gd32/Includes.mk
-include ../firmware-template-gd32/Validate.mk
-
-LIBS+=gd32 clib
+LIBS+=network superloop hal gd32 clib
 
 # The variable for the libraries include directory
 LIBINCDIRS:=$(addprefix -I../lib-,$(LIBS))
@@ -120,8 +118,8 @@ $(BUILD_DIRS) :
 $(BUILD)startup_$(LINE).o : $(FIRMWARE_DIR)/startup_$(LINE).S
 	$(AS) $(COPS) -D__ASSEMBLY__ -c $(FIRMWARE_DIR)/startup_$(LINE).S -o $(BUILD)startup_$(LINE).o
 
-$(BUILD)hardfault_handler.o : $(FIRMWARE_DIR)/hardfault_handler.c	
-	$(CC) $(COPS) -c $(FIRMWARE_DIR)/hardfault_handler.c -o $(BUILD)hardfault_handler.o
+$(BUILD)hardfault_handler.o : $(FIRMWARE_DIR)/hardfault_handler.cpp	
+	$(CPP) $(COPS) $(CPPOPS) -c $(FIRMWARE_DIR)/hardfault_handler.cpp -o $(BUILD)hardfault_handler.o
 
 $(BUILD)main.elf: Makefile.GD32 $(LINKER) $(BUILD)startup_$(LINE).o $(BUILD)hardfault_handler.o $(OBJECTS) $(LIBDEP)
 	$(LD) $(BUILD)startup_$(LINE).o $(BUILD)hardfault_handler.o $(OBJECTS) -Map $(MAP) -T $(LINKER) $(LDOPS) -o $(BUILD)main.elf $(LIBGD32) $(LDLIBS) $(PLATFORM_LIBGCC) -lgcc
@@ -130,5 +128,5 @@ $(BUILD)main.elf: Makefile.GD32 $(LINKER) $(BUILD)startup_$(LINE).o $(BUILD)hard
 
 $(TARGET) : $(BUILD)main.elf
 	$(PREFIX)objcopy $(BUILD)main.elf -O binary $(TARGET) --remove-section=.tcmsram* --remove-section=.ram* --remove-section=.sram1* --remove-section=.sram2* --remove-section=.ramadd* --remove-section=.bkpsram*
-	
+
 $(foreach bdir,$(SRCDIR),$(eval $(call compile-objects,$(bdir))))
