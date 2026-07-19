@@ -29,7 +29,7 @@ jobs:
         wget -qO /tmp/arm-toolchain.tar.xz "$TOOLCHAIN_URL"
         sudo tar -xJf /tmp/arm-toolchain.tar.xz -C /opt
         echo "$TOOLCHAIN_DIR/bin" >> "$GITHUB_PATH"
-     - name: version
+    - name: version
       run: arm-none-eabi-g++ --version
     - name: build all
       run: |
