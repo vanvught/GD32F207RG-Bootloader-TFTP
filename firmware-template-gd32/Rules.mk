@@ -168,9 +168,10 @@ $(TARGET): $(BUILD)main.elf
 		-O binary \
 		$@ \
 		--remove-section=.tcmsram* \
+		--remove-section=.ram* \
 		--remove-section=.sram1* \
 		--remove-section=.sram2* \
 		--remove-section=.ramadd* \
 		--remove-section=.bkpsram*
-
+		
 $(foreach bdir,$(SRCDIR),$(eval $(call compile-objects,$(bdir))))
